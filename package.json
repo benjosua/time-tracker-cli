@@ -1,0 +1,25 @@
+{
+  "name": "time-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "time-tracker": "bin/cli.js"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "arg": "^5.0.2",
+    "boxen": "^7.0.0",
+    "commander": "^9.4.1",
+    "date-fns": "^2.29.3",
+    "inquirer": "^9.1.4",
+    "luxon": "^3.1.0",
+    "table": "^6.8.1"
+  }
+}
