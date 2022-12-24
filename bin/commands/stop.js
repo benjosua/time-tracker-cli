@@ -13,7 +13,7 @@ export default function stop(data) {
     data[isOpenIndex].end = DateTime.now().toString();
 
     const dataString = JSON.stringify(data);
-    fs.writeFile("bin/report.json", dataString, (err) => {
+    fs.writeFile("./report.json", dataString, (err) => {
       if (err) {
         throw err;
       }

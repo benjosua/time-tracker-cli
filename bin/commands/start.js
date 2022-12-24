@@ -3,6 +3,7 @@ import chalk from "chalk";
 import fs from "fs";
 
 export default function start(data, projectName, tags, billable) {
+  
   const newSlot = {
     id: Date.now().toString(16).slice(2, 10),
     project: projectName,
@@ -35,11 +36,11 @@ export default function start(data, projectName, tags, billable) {
   // const projectExists = data.some((object) => object.project === projectName);
 
   if (typeof isOpen !== "undefined") {
-    return `End slot ${isOpen.id} before starting a new slot`;
+    return chalk.red(`End slot ${isOpen.id} before starting a new slot`);
   } else {
     data.push(newSlot);
     const dataString = JSON.stringify(data);
-    fs.writeFile("bin/report.json", dataString, (err) => {
+    fs.writeFile("./report.json", dataString, (err) => {
       if (err) {
         throw err;
       }
