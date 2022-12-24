@@ -8,7 +8,7 @@ export default function stop(data) {
   const isOpenIndex = data.findIndex((project) => Object.values(project).includes(""));
 
   if(!isOpen) {
-    return "You need to start a new slot before stopping it"
+    return chalk.red("You need to start a new slot before stopping it")
   } else {
     data[isOpenIndex].end = DateTime.now().toString();
 

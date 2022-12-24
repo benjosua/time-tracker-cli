@@ -4,16 +4,33 @@ import chalk from "chalk";
 
 export default function report(data, filter) {
 
+
+  if (typeof filter == "undefined") {
+    const isOpen = data.find((project) => Object.values(project).includes(""));
+    const isOpenIndex = data.findIndex((project) => Object.values(project).includes(""));
+
+    if(!isOpen) {
+      return chalk.red(`Theres no slot running. If you want to filter for a specific project or property use "report --help"`)
+    } else {
+     const runTime = DateTime.now().diff(DateTime.fromISO(data[isOpenIndex].start)).rescale().toHuman()
+     return chalk.green(`Slot with ID: ${isOpen.id} running since ${runTime} in project ${isOpen.project}`)
+
+    }
+  }
+
   // check if only one project id is reqested
   let keys = Object.keys(filter);
   let key = keys[0];
 
   if (keys.length == 1 || key == "id") {
     const framesWithID = data.filter(
-      (object) => object.project === filter.project
+      (object) => object.id === filter.id
     );
 
-    const slotDurations = framesWithID.map((x) =>
+    if (framesWithID.length <= 0) {
+      return chalk.red(`There is no slot with id ${filter.id}`)
+    } else {
+      const slotDurations = framesWithID.map((x) =>
       x.end == ""
         ? DateTime.now().diff(DateTime.fromISO(x.start)).toObject()
         : DateTime.fromISO(x.end).diff(DateTime.fromISO(x.start)).toObject()
@@ -39,6 +56,14 @@ export default function report(data, filter) {
     }));
 
     let tableHeader = Object.keys(Object.assign({}, ...addDurationAndFormatBillable));
+
+    function capitalizeWords(arr) {
+      return arr.map(element => {
+        return element.charAt(0).toUpperCase() + element.slice(1).toLowerCase();
+      });
+    }
+
+    let capitalizedTableHeader = capitalizeWords(tableHeader)
 
     // { milliseconds: SUM } alle durations zsm
 
@@ -92,7 +117,7 @@ export default function report(data, filter) {
     // convert objects to table array
     const slots = addDurationAndFormatBillable.map((obj) => Object.values(obj));
 
-    slots.unshift(tableHeader);
+    slots.unshift(capitalizedTableHeader);
     slots.push(footer);
 
     const config = {
@@ -104,10 +129,10 @@ export default function report(data, filter) {
         { col: 0, row: slots.length - 1, colSpan: 6, alignment: "right" },
       ],
     };
-    console.log(slots)
-    console.log(table(slots, config))
 
     return table(slots, config);
+
+    }
   } else {
     // handle if multiple filters are specified
   }

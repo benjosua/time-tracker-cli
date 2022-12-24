@@ -6,7 +6,7 @@ import start from "./commands/start.js"
 import report from "./commands/report.js";
 import stop from "./commands/stop.js";
 
-const path = "./report.json";
+const path = "bin/report.json";
 
 const json_string = await fs.promises.readFile(path);
 const RAW_DATA = await JSON.parse(json_string);
