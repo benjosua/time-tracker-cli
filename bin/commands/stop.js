@@ -1,6 +1,7 @@
 import { DateTime, Duration } from "luxon";
 import chalk from "chalk";
 import fs from "fs";
+import { homedir } from 'os'
 
 export default function stop(data) {
 
@@ -12,8 +13,12 @@ export default function stop(data) {
   } else {
     data[isOpenIndex].end = DateTime.now().toString();
 
+    // get path for data file in user home directory
+    const userHomeDir = homedir()
+    const path = userHomeDir + "/.timez/data.json";
+
     const dataString = JSON.stringify(data);
-    fs.writeFile("./report.json", dataString, (err) => {
+    fs.writeFile(path, dataString, (err) => {
       if (err) {
         throw err;
       }

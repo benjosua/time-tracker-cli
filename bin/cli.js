@@ -6,7 +6,10 @@ import start from "./commands/start.js"
 import report from "./commands/report.js";
 import stop from "./commands/stop.js";
 
-const path = "bin/report.json";
+import { homedir } from 'os'
+const userHomeDir = homedir()
+
+const path = userHomeDir + "/.timez/data.json";
 
 const json_string = await fs.promises.readFile(path);
 const RAW_DATA = await JSON.parse(json_string);
@@ -24,7 +27,7 @@ program
   .option('-p, --project [project]', 'specify project')
   .option('-t, --tags [tags...]', 'specify tags')
   .option('-b, --billable', 'specify if project is billable')
-  .description("Start tracking")
+  .description("View report")
   .action(async (options) => {
     console.log(report(await RAW_DATA, options))
   });
@@ -36,7 +39,7 @@ program
   .option('-b, --billable', 'specify if project is billable')
   .description("Start tracking")
   .action(async (name, options) => {
-    console.log(start(await RAW_DATA, name, options.tags, options.billable))
+    console.log(start(await RAW_DATA, name, options.tags, !options.billable))
   });
 
   program

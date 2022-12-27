@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "time-tracker": "bin/cli.js"
+    "time-tracker": "./bin/cli.js"
   },
   "type": "module",
   "scripts": {

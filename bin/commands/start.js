@@ -1,6 +1,7 @@
 import { DateTime, Duration } from "luxon";
 import chalk from "chalk";
 import fs from "fs";
+import { homedir } from "os";
 
 export default function start(data, projectName, tags, billable) {
   
@@ -9,28 +10,14 @@ export default function start(data, projectName, tags, billable) {
     project: projectName,
     start: DateTime.now().toString(),
     end: "",
-    tags: tags,
+    tags: tags ? tags : [],
     is_billable: billable || false,
   };
-
-  if (!data.some((slot) => slot.project === projectName)) {
-    console.log(`Note: "${projectName}" is a new project`);
-  }
 
   // get all tags from all slots then filter to get all unique ones
   const Tags = data
     .flatMap((slot) => slot.tags)
     .filter((v, i, a) => a.indexOf(v) === i);
-
-  const newTags = tags.filter(function (i) {
-    return Tags.indexOf(i) < 0;
-  });
-
-  if (newTags.length > 1) {
-    console.log(`Note: ${newTags.join(", ")} are new tags`);
-  } else if (newTags.length > 0) {
-    console.log(`Note: ${newTags[0]} is a new tag`);
-  }
 
   const isOpen = data.find((project) => Object.values(project).includes(""));
   // const projectExists = data.some((object) => object.project === projectName);
@@ -38,9 +25,30 @@ export default function start(data, projectName, tags, billable) {
   if (typeof isOpen !== "undefined") {
     return chalk.red(`End slot ${isOpen.id} before starting a new slot`);
   } else {
+    // print new project name when project doesnt exist yet
+    if (!data.some((slot) => slot.project === projectName)) {
+      console.log(`Note: "${projectName}" is a new project`);
+    }
+
+    // print new tags if there are any
+    let newTags;
+    if (tags) {
+      newTags = tags.filter((i) => Tags.indexOf(i) < 0);
+      if (newTags.length > 1) {
+        console.log(`Note: ${newTags.join(", ")} are new tags`);
+      } else if (newTags.length > 0) {
+        console.log(`Note: ${newTags[0]} is a new tag`);
+      }
+    }
+
     data.push(newSlot);
+
+    // get path for data file in user home directory
+    const userHomeDir = homedir();
+    const path = userHomeDir + "/.timez/data.json";
+
     const dataString = JSON.stringify(data);
-    fs.writeFile("./report.json", dataString, (err) => {
+    fs.writeFile(path, dataString, (err) => {
       if (err) {
         throw err;
       }
