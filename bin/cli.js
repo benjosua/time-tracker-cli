@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import { Command } from "commander";
-import start from "./commands/start.js"
+import start from "./commands/start.js";
 import report from "./commands/report.js";
 import stop from "./commands/stop.js";
 

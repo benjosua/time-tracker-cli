@@ -63,10 +63,7 @@ export default function report(data, filter) {
         duration:
           v.end == ""
             ? DateTime.now().diff(DateTime.fromISO(v.start)).rescale().toHuman()
-            : DateTime.fromISO(v.end)
-                .diff(DateTime.fromISO(v.start))
-                .rescale()
-                .toHuman(),
+            : DateTime.fromISO(v.end).diff(DateTime.fromISO(v.start)).rescale().toHuman(),
         is_billable:
           v.is_billable == false ? chalk.red("No") : chalk.green("Yes"),
       }));
@@ -83,8 +80,6 @@ export default function report(data, filter) {
         });
       }
 
-      let capitalizedTableHeader = capitalizeWords(tableHeader);
-
       // { milliseconds: SUM } alle durations zsm
 
       const withoutMilliseconds = totalTime
@@ -100,7 +95,7 @@ export default function report(data, filter) {
         "",
         "",
         "",
-        chalk.green(
+        chalk.whiteBright(
           Duration.fromObject(cleanUnits(withoutMilliseconds)).toHuman()
         ),
       ];
@@ -110,14 +105,17 @@ export default function report(data, filter) {
       // color configuration
 
       const colors = {
-        id: "blue",
-        project: "red",
-        start: "bold",
-        end: "red",
-        tags: "blue",
-        is_billable: "yellow",
-        duration: "bold",
+        Id: "bgWhite",
+        Project: "bgWhite",
+        Start: "bgGreen",
+        End: "bgRed",
+        Tags: "bgWhite",
+        Is_billable: "bgBlue",
+        Date: "bgYellow",
+        Duration: "bold",
       };
+
+      tableHeader = capitalizeWords(tableHeader)
 
       // if tableHeader colum is in color config recolor with chalk
 
@@ -129,6 +127,8 @@ export default function report(data, filter) {
         }
       });
 
+      tableHeader = tableHeader.map((string) => chalk.black(string))
+
       // format start and end from iso to human readable strings
       const keysToChange = ["start", "end"];
 
@@ -137,7 +137,7 @@ export default function report(data, filter) {
           DateTime.fromISO(x[key]).isValid == false
             ? (x[key] = chalk.green("Open"))
             : (x[key] = DateTime.fromISO(x[key]).toLocaleString(
-                DateTime.TIME_24_WITH_SECONDS
+                DateTime.TIME_24_SIMPLE
               ));
         }
       });
@@ -147,7 +147,7 @@ export default function report(data, filter) {
         Object.values(obj)
       );
 
-      slots.unshift(capitalizedTableHeader);
+      slots.unshift(tableHeader);
       slots.push(footer);
 
       const config = {
@@ -156,7 +156,7 @@ export default function report(data, filter) {
           content: chalk.whiteBright(`${title}`),
         },
         spanningCells: [
-          { col: 0, row: slots.length - 1, colSpan: 6, alignment: "right" },
+          { col: 0, row: slots.length - 1, colSpan: 7, alignment: "right" },
         ],
       };
 
